@@ -24,6 +24,7 @@ const Table = React.createClass({
     onRowHover: React.PropTypes.func,
     onRowHoverExit: React.PropTypes.func,
     onRowSelection: React.PropTypes.func,
+    onRowClick: React.PropTypes.func,
     selectable: React.PropTypes.bool,
     style: React.PropTypes.object,
   },
@@ -199,6 +200,7 @@ const Table = React.createClass({
         onRowHover: this._onRowHover,
         onRowHoverExit: this._onRowHoverExit,
         onRowSelection: this._onRowSelection,
+        onRowClick: this._onRowClick,
         selectable: this.props.selectable,
         style: this.mergeAndPrefix({height: this.props.height}, base.props.style),
       }
@@ -232,6 +234,10 @@ const Table = React.createClass({
   _onRowSelection(selectedRows) {
     if (this.state.allRowsSelected) this.setState({ allRowsSelected: false });
     if (this.props.onRowSelection) this.props.onRowSelection(selectedRows);
+  },
+
+  _onRowClick(rowNumber) {
+    if (this.props.onRowClick) this.props.onRowClick(rowNumber);
   },
 
   _onSelectAll() {
