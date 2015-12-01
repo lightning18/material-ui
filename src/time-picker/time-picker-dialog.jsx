@@ -29,13 +29,13 @@ const TimePickerDialog = React.createClass({
     muiTheme: React.PropTypes.object,
   },
 
-  getChildContext () {
+  getChildContext() {
     return {
       muiTheme: this.state.muiTheme,
     };
   },
 
-  getInitialState () {
+  getInitialState() {
     return {
       open: false,
       muiTheme: this.context.muiTheme ? this.context.muiTheme : ThemeManager.getMuiTheme(DefaultRawTheme),
@@ -44,7 +44,7 @@ const TimePickerDialog = React.createClass({
 
   //to update theme inside state whenever a new theme is passed down
   //from the parent / owner using context
-  componentWillReceiveProps (nextProps, nextContext) {
+  componentWillReceiveProps(nextProps, nextContext) {
     let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
     this.setState({muiTheme: newMuiTheme});
   },
@@ -64,6 +64,8 @@ const TimePickerDialog = React.createClass({
       onAccept,
       format,
       autoOk,
+      onShow,
+      onDismiss,
       ...other,
     } = this.props;
 
@@ -85,7 +87,7 @@ const TimePickerDialog = React.createClass({
         key={0}
         label="Cancel"
         secondary={true}
-        onTouchTap={this._handleCancelTouchTap} />,
+        onTouchTap={this.dismiss} />,
       <FlatButton
         key={1}
         label="OK"
@@ -95,6 +97,14 @@ const TimePickerDialog = React.createClass({
 
     const onClockChangeMinutes = (autoOk === true ? this._handleOKTouchTap : undefined);
 
+    // Those two properties are deprecated, we will remove them at some point
+    if (typeof onDismiss === 'function') {
+      other.onDismiss = onDismiss;
+    }
+    if (typeof onShow === 'function') {
+      other.onShow = onShow;
+    }
+
     return (
       <Dialog {...other}
         ref="dialogWindow"
@@ -102,8 +112,6 @@ const TimePickerDialog = React.createClass({
         bodyStyle={this.mergeAndPrefix(styles.body)}
         actions={actions}
         contentStyle={styles.dialogContent}
-        onDismiss={this._handleDialogDismiss}
-        onShow={this._handleDialogShow}
         repositionOnUpdate={false}
         open={this.state.open}
         onRequestClose={this.dismiss}>
@@ -128,10 +136,6 @@ const TimePickerDialog = React.createClass({
     });
   },
 
-  _handleCancelTouchTap() {
-    this.dismiss();
-  },
-
   _handleOKTouchTap() {
     this.dismiss();
     if (this.props.onAccept) {
@@ -139,20 +143,8 @@ const TimePickerDialog = React.createClass({
     }
   },
 
-  _handleDialogShow() {
-    if (this.props.onShow) {
-      this.props.onShow();
-    }
-  },
-
-  _handleDialogDismiss() {
-    if (this.props.onDismiss) {
-      this.props.onDismiss();
-    }
-  },
-
   _handleWindowKeyUp(event) {
-    if (this.refs.dialogWindow.isOpen()) {
+    if (this.state.open) {
       switch (event.keyCode) {
         case KeyCode.ENTER:
           this._handleOKTouchTap();

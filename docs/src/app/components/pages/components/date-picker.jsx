@@ -1,9 +1,14 @@
-const React = require('react');
-const { DatePicker, TextField, Paper, Toggle } = require('material-ui');
-const ComponentDoc = require('../../component-doc');
-const Code = require('date-picker-code');
-const CodeExample = require('../../code-example/code-example');
-const CodeBlock = require('../../code-example/code-block');
+import React from 'react';
+import {DatePicker, TextField, Paper, Toggle} from 'material-ui';
+import ComponentDoc from '../../component-doc';
+import Code from 'date-picker-code';
+import CodeExample from '../../code-example/code-example';
+import CodeBlock from '../../code-example/code-block';
+
+if (!window.Intl) {
+  require('intl');
+  require('intl/locale-data/jsonp/fr');
+}
 
 export default class DatePickerPage extends React.Component {
   constructor(props) {
@@ -11,9 +16,9 @@ export default class DatePickerPage extends React.Component {
 
     let minDate = new Date();
     let maxDate = new Date();
-    minDate.setFullYear(minDate.getFullYear() -1);
+    minDate.setFullYear(minDate.getFullYear() - 1);
     minDate.setHours(0, 0, 0, 0);
-    maxDate.setFullYear(maxDate.getFullYear() +1);
+    maxDate.setFullYear(maxDate.getFullYear() + 1);
     maxDate.setHours(0, 0, 0, 0);
 
     this.state = {
@@ -31,9 +36,11 @@ export default class DatePickerPage extends React.Component {
         infoArray: [
           {
             name: 'container',
-            type: 'one of: dialog, container',
+            type: 'one of: dialog, inline',
             header: 'default: dialog',
-            desc: 'The date pickers container type',
+            desc: 'Used to control how the DatePicker will be displayed when a user tries to set ' +
+            'a date. `dialog` (default) displays the DatePicker as a dialog with a modal. `inline` ' +
+            'displays the DatePicker below the input field (similar to auto complete)',
           },
           {
             name: 'DateTimeFormat',
@@ -64,7 +71,7 @@ export default class DatePickerPage extends React.Component {
           },
           {
             name: 'defaultDate',
-            type: 'date object',
+            type: 'instanceOf(Date)',
             header: 'optional',
             desc: 'This is the initial date value of the component. If either `value` or `valueLink` ' +
             'is provided they will override this prop with `value` taking precedence.',
@@ -96,21 +103,21 @@ export default class DatePickerPage extends React.Component {
           },
           {
             name: 'maxDate',
-            type: 'date object',
+            type: 'instanceOf(Date)',
             header: 'optional',
             desc: 'The ending of a range of valid dates. The range includes the endDate. ' +
               'The default value is current date + 100 years.',
           },
           {
             name: 'minDate',
-            type: 'date object',
+            type: 'instanceOf(Date)',
             header: 'optional',
             desc: 'The beginning of a range of valid dates. The range includes the startDate. ' +
               'The default value is current date - 100 years.',
           },
           {
             name: 'mode',
-            type: 'one of: portrait, landscape',
+            type: 'oneOf ["portrait", "landscape"]',
             header: 'default: portrait',
             desc: 'Tells the component to display the picker in portrait or landscape mode.',
           },
@@ -167,7 +174,7 @@ export default class DatePickerPage extends React.Component {
         infoArray: [
           {
             name: 'onChange',
-            header: 'function(nill, date)',
+            header: 'function(null, date)',
             desc: 'Callback function that is fired when the date value ' +
             'changes. Since there is no particular event associated with ' +
             'the change the first argument will always be null and the second ' +
@@ -206,8 +213,8 @@ export default class DatePickerPage extends React.Component {
         <Paper style = {{marginBottom: '22px'}}>
           <CodeBlock>
           {
-            '//Import statements:\nconst DatePicker = require(\'material-ui/lib/date-picker/date-picker\');\n' +
-            'const DatePickerDialog = require(\'material-ui/lib/date-picker/date-picker-dialog\');\n\n' +
+            '//Import statements:\nimport DatePicker from \'material-ui/lib/date-picker/date-picker\';\n' +
+            'import DatePickerDialog from \'material-ui/lib/date-picker/date-picker-dialog\';\n\n' +
             '//See material-ui/lib/index.js for more\n'
           }
           </CodeBlock>
@@ -245,7 +252,8 @@ export default class DatePickerPage extends React.Component {
           <DatePicker
             hintText="fr version"
             DateTimeFormat={Intl.DateTimeFormat}
-            // Intl is defined by the browser see http://caniuse.com/#search=intl
+            // Intl is supported by most modern browsers, see http://caniuse.com/#search=intl
+            // for browsers that don't support it use this polyfill https://github.com/andyearnshaw/Intl.js
             wordings={{ok: 'OK', cancel: 'Annuler'}}
             locale="fr" />
 
